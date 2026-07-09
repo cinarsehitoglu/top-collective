@@ -12,7 +12,7 @@ import { categories } from "@/data/mock";
 import Link from "next/link";
 
 const MAX_IMAGES = 5;
-const MAX_SIZE_MB = 2;
+const MAX_SIZE_MB = 100;
 
 function readAsDataURL(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
