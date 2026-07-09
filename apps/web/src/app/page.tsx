@@ -32,7 +32,7 @@ export default function HomePage() {
       <section className="py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="mb-6 text-xl font-semibold">Kategoriler</h2>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-8">
+          <div className="flex flex-wrap justify-center gap-3">
             {categories.map((cat) => (
               <CategoryCard key={cat.id} category={cat} />
             ))}
