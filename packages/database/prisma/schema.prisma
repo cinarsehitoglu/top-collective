@@ -1,0 +1,227 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  VISITOR
+  INDIVIDUAL
+  CORPORATE
+  MODERATOR
+  ADMIN
+}
+
+enum ListingStatus {
+  DRAFT
+  ACTIVE
+  PENDING
+  REJECTED
+  SOLD
+  DELETED
+}
+
+enum ListingType {
+  STANDARD
+  VIP
+  FEATURED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum ComplaintStatus {
+  PENDING
+  REVIEWING
+  RESOLVED
+  REJECTED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  phone         String?
+  passwordHash  String
+  role          UserRole  @default(INDIVIDUAL)
+  photoUrl      String?
+  bio           String?
+  isVerified    Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  listings      Listing[]
+  messages      Message[]      @relation("SentMessages")
+  receivedMsgs  Message[]      @relation("ReceivedMessages")
+  favorites     Favorite[]
+  ratings       Rating[]       @relation("Reviewer")
+  receivedRating Rating[]      @relation("ReviewedUser")
+  payments      Payment[]
+  complaints    Complaint[]
+  notifications Notification[]
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  icon      String?
+  sortOrder Int        @default(0)
+  isActive  Boolean    @default(true)
+  parentId  String?
+  parent    Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children  Category[] @relation("CategoryHierarchy")
+  listings  Listing[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Listing {
+  id            String        @id @default(cuid())
+  title         String
+  description   String
+  price         Float
+  currency      String        @default("TRY")
+  status        ListingStatus @default(ACTIVE)
+  type          ListingType   @default(STANDARD)
+  location      String?
+  viewCount     Int           @default(0)
+  isVip         Boolean       @default(false)
+  isFeatured    Boolean       @default(false)
+  expiresAt     DateTime?
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  categoryId    String
+  category      Category      @relation(fields: [categoryId], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  images          ListingImage[]
+  attributes      ListingAttribute[]
+  messages        Message[]
+  favorites       Favorite[]
+  ratings         Rating[]
+  complaints      Complaint[]
+}
+
+model ListingImage {
+  id           String  @id @default(cuid())
+  url          String
+  thumbnailUrl String?
+  sortOrder    Int     @default(0)
+  listingId    String
+  listing      Listing @relation(fields: [listingId], references: [id])
+  createdAt    DateTime @default(now())
+}
+
+model ListingAttribute {
+  id             String  @id @default(cuid())
+  attributeName  String
+  attributeValue String
+  listingId      String
+  listing        Listing @relation(fields: [listingId], references: [id])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  content    String
+  mediaUrl   String?
+  isRead     Boolean  @default(false)
+  senderId   String
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId String
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  listingId  String?
+  listing    Listing? @relation(fields: [listingId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Favorite {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  listingId String
+  listing   Listing @relation(fields: [listingId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, listingId])
+}
+
+model Rating {
+  id             String   @id @default(cuid())
+  score          Int
+  comment        String?
+  reviewerId     String
+  reviewer       User     @relation("Reviewer", fields: [reviewerId], references: [id])
+  reviewedUserId String
+  reviewedUser   User     @relation("ReviewedUser", fields: [reviewedUserId], references: [id])
+  listingId      String
+  listing        Listing  @relation(fields: [listingId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([reviewerId, listingId])
+}
+
+model Package {
+  id            String   @id @default(cuid())
+  name          String
+  price         Float
+  currency      String   @default("TRY")
+  durationDays  Int
+  listingLimit  Int?
+  features      Json
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  payments      Payment[]
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  amount          Float
+  currency        String        @default("TRY")
+  status          PaymentStatus @default(PENDING)
+  paymentMethod   String?
+  transactionId   String?
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  packageId       String?
+  package         Package?      @relation(fields: [packageId], references: [id])
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Complaint {
+  id          String           @id @default(cuid())
+  reason      String
+  description String?
+  status      ComplaintStatus  @default(PENDING)
+  reporterId  String
+  reporter    User             @relation(fields: [reporterId], references: [id])
+  listingId   String
+  listing     Listing          @relation(fields: [listingId], references: [id])
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  type      String
+  title     String
+  message   String?
+  data      Json?
+  isRead    Boolean  @default(false)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
