@@ -17,7 +17,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:bg-gray-950/95">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2 shrink-0">
-          <img src="/logo.jpg" alt="Top Collective" className="h-8 w-auto" />
+          <span className="text-xl font-extrabold tracking-tight">Top Collective</span>
         </Link>
 
         <div className="flex flex-1 items-center gap-2">
