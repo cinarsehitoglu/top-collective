@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search, PlusCircle, MessageCircle, User, Bell, LogOut, ExternalLink } from "lucide-react";
+import { PlusCircle, MessageCircle, User, Bell, LogOut } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
+import { SearchBar } from "@/components/search-bar";
 
 export function Header() {
   const { user, logout } = useAuth();
@@ -20,10 +20,7 @@ export function Header() {
         </Link>
 
         <div className="flex flex-1 items-center gap-2">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Ne arıyorsunuz?" className="pl-9" />
-          </div>
+          <SearchBar />
           <Button variant="outline" size="sm" className="hidden md:flex">
             Kategoriler
           </Button>

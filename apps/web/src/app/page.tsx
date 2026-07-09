@@ -1,10 +1,24 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { categories } from "@/data/mock";
 import { CategoryCard } from "@/components/category-card";
+import { ListingCard } from "@/components/listing-card";
 import { Search, SlidersHorizontal, Inbox } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import type { ListingItem } from "@/data/mock";
+import { SearchBar } from "@/components/search-bar";
 
 export default function HomePage() {
+  const [listings, setListings] = useState<ListingItem[]>([]);
+
+  useEffect(() => {
+    try {
+      const data = localStorage.getItem("tc_listings");
+      if (data) setListings(JSON.parse(data));
+    } catch {}
+  }, []);
+
   return (
     <div>
       <section className="bg-gradient-to-b from-primary/5 to-background pb-8 pt-6">
@@ -17,9 +31,8 @@ export default function HomePage() {
               İkinci el veya sıfır ürünler, hizmet ilanları — aradığın her şey burada
             </p>
             <div className="mt-6 flex gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input placeholder="Ürün, hizmet veya kategori ara..." className="pl-9 h-12 text-base" />
+              <div className="flex-1 max-w-md">
+                <SearchBar large />
               </div>
               <Button variant="outline" size="icon" className="h-12 w-12 shrink-0">
                 <SlidersHorizontal className="h-5 w-5" />
@@ -40,17 +53,25 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-16">
+      <section className="py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="mb-8 text-xl font-semibold text-center">İlanlar</h2>
-          <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-16 text-center">
-            <Inbox className="h-12 w-12 text-muted-foreground/50" />
-            <h3 className="mt-4 text-lg font-medium text-muted-foreground">Henüz ilan verilmedi</h3>
-            <p className="mt-1 text-sm text-muted-foreground/70">İlk ilanı sen ver, topluluğa katkıda bulun!</p>
-            <a href="/ilan-ver">
-              <Button className="mt-6">İlan Ver</Button>
-            </a>
-          </div>
+          <h2 className="mb-6 text-xl font-semibold">İlanlar</h2>
+          {listings.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {listings.map((listing: ListingItem) => (
+                <ListingCard key={listing.id} listing={listing} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-16 text-center">
+              <Inbox className="h-12 w-12 text-muted-foreground/50" />
+              <h3 className="mt-4 text-lg font-medium text-muted-foreground">Henüz ilan verilmedi</h3>
+              <p className="mt-1 text-sm text-muted-foreground/70">İlk ilanı sen ver, topluluğa katkıda bulun!</p>
+              <a href="/ilan-ver">
+                <Button className="mt-6">İlan Ver</Button>
+              </a>
+            </div>
+          )}
         </div>
       </section>
 

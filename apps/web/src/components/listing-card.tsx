@@ -11,7 +11,7 @@ export function ListingCard({ listing }: { listing: ListingItem }) {
       <Card className="group overflow-hidden transition-all hover:shadow-md">
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
           <img
-            src={listing.imageUrl}
+            src={listing.imageUrl || "/placeholder.svg"}
             alt={listing.title}
             className="h-full w-full object-cover transition-transform group-hover:scale-105"
           />
