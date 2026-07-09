@@ -2,6 +2,7 @@
 
 import { useParams, notFound } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
+import { useLang } from "@/context/lang-context";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { Mail, Calendar, ShieldCheck, MessageCircle } from "lucide-react";
 export default function ProfilePage() {
   const params = useParams();
   const { getUserById, user: currentUser } = useAuth();
+  const { t } = useLang();
   const profile = getUserById(params.id as string);
 
   if (!profile) notFound();
@@ -26,37 +28,26 @@ export default function ProfilePage() {
               <div className="flex items-center justify-center sm:justify-start gap-2">
                 <h1 className="text-2xl font-bold">{profile.name}</h1>
                 {profile.role === "admin" && (
-                  <Badge variant="default" className="bg-amber-500 hover:bg-amber-600">
-                    <ShieldCheck className="mr-1 h-3 w-3" />
-                    Admin
+                  <Badge className="bg-amber-500 hover:bg-amber-600">
+                    <ShieldCheck className="mr-1 h-3 w-3" />{t("profile.admin")}
                   </Badge>
                 )}
               </div>
               <div className="mt-3 flex flex-wrap justify-center sm:justify-start gap-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Mail className="h-4 w-4" />
-                  {profile.email}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  Katılım: {new Date(profile.createdAt).toLocaleDateString("tr-TR")}
-                </span>
+                <span className="flex items-center gap-1"><Mail className="h-4 w-4" />{profile.email}</span>
+                <span className="flex items-center gap-1"><Calendar className="h-4 w-4" />{t("profile.join")}: {new Date(profile.createdAt).toLocaleDateString("tr-TR")}</span>
               </div>
               {currentUser && currentUser.id !== profile.id && (
-                <Button className="mt-4">
-                  <MessageCircle className="mr-2 h-4 w-4" />
-                  Mesaj Gönder
-                </Button>
+                <Button className="mt-4"><MessageCircle className="mr-2 h-4 w-4" />{t("detail.sendmsg")}</Button>
               )}
             </div>
           </div>
         </CardContent>
       </Card>
-
       <div className="mt-6">
-        <h2 className="text-lg font-semibold mb-4">İlanları</h2>
+        <h2 className="text-lg font-semibold mb-4">{t("profile.listings")}</h2>
         <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-12 text-center">
-          <p className="text-muted-foreground">Henüz ilanı bulunmuyor.</p>
+          <p className="text-muted-foreground">{t("profile.nolistings")}</p>
         </div>
       </div>
     </div>

@@ -6,11 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/auth-context";
+import { useLang } from "@/context/lang-context";
 import Link from "next/link";
 
 export default function RegisterPage() {
   const router = useRouter();
   const { register } = useAuth();
+  const { t } = useLang();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -21,44 +23,39 @@ export default function RegisterPage() {
     e.preventDefault();
     setError("");
     const ok = await register(name, email, password, phone);
-    if (ok) {
-      router.push("/");
-    } else {
-      setError("Bu e-posta adresi zaten kayıtlı.");
-    }
+    if (ok) router.push("/");
+    else setError(t("register.error"));
   };
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Kayıt Ol</CardTitle>
-          <CardDescription>Ücretsiz hesap oluştur, ilan vermeye başla</CardDescription>
+          <CardTitle className="text-2xl">{t("register.title")}</CardTitle>
+          <CardDescription>{t("register.desc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Ad Soyad</label>
+              <label className="text-sm font-medium">{t("register.name")}</label>
               <Input placeholder="Adınız ve soyadınız" value={name} onChange={(e) => setName(e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">E-posta</label>
+              <label className="text-sm font-medium">{t("register.email")}</label>
               <Input type="email" placeholder="ornek@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Telefon</label>
+              <label className="text-sm font-medium">{t("register.phone")}</label>
               <Input type="tel" placeholder="05XX XXX XX XX" value={phone} onChange={(e) => setPhone(e.target.value)} />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Şifre</label>
+              <label className="text-sm font-medium">{t("register.password")}</label>
               <Input type="password" placeholder="En az 3 karakter" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={3} />
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <Button type="submit" className="w-full">Kayıt Ol</Button>
+            <Button type="submit" className="w-full">{t("register.button")}</Button>
             <div className="text-center text-sm text-muted-foreground">
-              <Link href="/giris" className="text-primary hover:underline">
-                Zaten hesabın var mı? Giriş Yap
-              </Link>
+              <Link href="/giris" className="text-primary hover:underline">{t("register.hasaccount")}</Link>
             </div>
           </form>
         </CardContent>
