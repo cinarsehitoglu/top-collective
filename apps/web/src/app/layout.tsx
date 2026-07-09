@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { AuthProvider } from "@/context/auth-context";
+import { ThemeProvider } from "@/context/theme-context";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,6 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="tr">
       <body className={inter.className}>
+        <ThemeProvider>
         <AuthProvider>
           <div className="flex min-h-screen flex-col">
             <Header />
@@ -23,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Footer />
           </div>
         </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

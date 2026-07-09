@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, MessageCircle, User, Bell, LogOut } from "lucide-react";
+import { PlusCircle, MessageCircle, User, Bell, LogOut, Moon, Sun } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
+import { useTheme } from "@/context/theme-context";
 import { SearchBar } from "@/components/search-bar";
 
 export function Header() {
   const { user, logout } = useAuth();
+  const { theme, toggle } = useTheme();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
@@ -26,7 +28,10 @@ export function Header() {
           </Button>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" onClick={toggle} title={theme === "light" ? "Gece Modu" : "Gündüz Modu"}>
+            {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+          </Button>
           {user ? (
             <>
               <Link href="/bildirimler">
