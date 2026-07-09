@@ -32,12 +32,16 @@ export function Header() {
         <div className="flex items-center gap-2">
           {user ? (
             <>
-              <Button variant="ghost" size="icon" className="hidden md:flex">
-                <Bell className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="hidden md:flex">
-                <MessageCircle className="h-5 w-5" />
-              </Button>
+              <Link href="/bildirimler">
+                <Button variant="ghost" size="icon" className="hidden md:flex">
+                  <Bell className="h-5 w-5" />
+                </Button>
+              </Link>
+              <Link href="/mesajlar">
+                <Button variant="ghost" size="icon" className="hidden md:flex">
+                  <MessageCircle className="h-5 w-5" />
+                </Button>
+              </Link>
               <Link href="/ilan-ver">
                 <Button size="sm" className="hidden sm:flex">
                   <PlusCircle className="mr-1 h-4 w-4" />
