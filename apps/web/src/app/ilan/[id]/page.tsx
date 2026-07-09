@@ -32,7 +32,7 @@ export default function ListingDetailPage() {
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-center overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800 h-80">
-            <img src={listing.imageUrl || "/placeholder.svg"} alt={listing.title} className="h-full w-full object-cover" />
+            <img src={listing.images?.[0] || listing.imageUrl || "/placeholder.svg"} alt={listing.title} className="h-full w-full object-cover" />
           </div>
           <Card>
             <CardContent className="p-6">
@@ -69,7 +69,7 @@ export default function ListingDetailPage() {
                 </div>
                 <div>
                   <p className="font-medium">{seller?.name || "?"}</p>
-                  <p className="text-sm text-muted-foreground">{listing.imageCount || 0} {t("detail.images")}</p>
+                  <p className="text-sm text-muted-foreground">{listing.images?.length || 0} {t("detail.images")}</p>
                 </div>
               </Link>
               {currentUser && currentUser.id !== listing.userId && (

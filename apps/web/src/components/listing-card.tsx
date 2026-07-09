@@ -6,12 +6,13 @@ import { formatPrice, timeAgo } from "@/lib/utils";
 import type { ListingItem } from "@/data/mock";
 
 export function ListingCard({ listing }: { listing: ListingItem }) {
+  const imgSrc = listing.imageUrl || (listing as any).images?.[0] || "/placeholder.svg";
   return (
     <Link href={`/ilan/${listing.id}`}>
       <Card className="group overflow-hidden transition-all hover:shadow-md">
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
           <img
-            src={listing.imageUrl || "/placeholder.svg"}
+            src={imgSrc}
             alt={listing.title}
             className="h-full w-full object-cover transition-transform group-hover:scale-105"
           />
