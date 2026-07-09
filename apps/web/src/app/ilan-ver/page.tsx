@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, X } from "lucide-react";
+import { ImageOff } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { useLang } from "@/context/lang-context";
 import { categories } from "@/data/mock";
@@ -15,8 +15,6 @@ export default function CreateListingPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { t } = useLang();
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [images, setImages] = useState<{ file: File; url: string }[]>([]);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
@@ -33,26 +31,13 @@ export default function CreateListingPage() {
     );
   }
 
-  const addImages = (files: FileList | null) => {
-    if (!files) return;
-    const newImages = Array.from(files).map((file) => ({ file, url: URL.createObjectURL(file) }));
-    setImages((prev) => [...prev, ...newImages].slice(0, 10));
-  };
-
-  const removeImage = (index: number) => {
-    setImages((prev) => {
-      URL.revokeObjectURL(prev[index].url);
-      return prev.filter((_, i) => i !== index);
-    });
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !price) return;
     const listing = {
       id: "ilan-" + Date.now(),
       title, category, price: Number(price), currency, location, description: desc,
-      imageCount: images.length, userId: user.id, createdAt: new Date().toISOString(),
+      userId: user.id, createdAt: new Date().toISOString(),
     };
     const existing = JSON.parse(localStorage.getItem("tc_listings") || "[]");
     existing.unshift(listing);
@@ -67,22 +52,9 @@ export default function CreateListingPage() {
         <Card>
           <CardHeader><CardTitle className="text-lg">{t("create.photos")}</CardTitle></CardHeader>
           <CardContent>
-            <div className="flex flex-wrap gap-3">
-              {images.map((img, i) => (
-                <div key={i} className="relative h-28 w-28 overflow-hidden rounded-lg border">
-                  <img src={img.url} alt="" className="h-full w-full object-cover" />
-                  <button type="button" onClick={() => removeImage(i)} className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white">
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
-              {images.length < 10 && (
-                <label className="flex h-28 w-28 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed hover:border-primary">
-                  <Upload className="h-6 w-6 text-muted-foreground" />
-                  <span className="mt-1 text-xs text-muted-foreground">{images.length === 0 ? t("create.addphoto") : t("create.addmore")}</span>
-                  <input ref={fileRef} type="file" className="hidden" accept="image/*" multiple onChange={(e) => { addImages(e.target.files); e.target.value = ""; }} />
-                </label>
-              )}
+            <div className="flex items-center gap-3 rounded-lg border-2 border-dashed p-6 text-sm text-muted-foreground">
+              <ImageOff className="h-5 w-5 shrink-0" />
+              <span>Görsel desteği henüz aktif değil. İlanını yayınladıktan sonra daha sonra ekleyebilirsin.</span>
             </div>
           </CardContent>
         </Card>
