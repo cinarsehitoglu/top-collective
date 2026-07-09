@@ -1,5 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 44" fill="none">
-  <rect width="40" height="40" rx="10" fill="#2563eb"/>
-  <text x="20" y="28" text-anchor="middle" fill="white" font-size="20" font-weight="800" font-family="system-ui">TC</text>
-  <text x="52" y="28" fill="currentColor" font-size="20" font-weight="800" font-family="system-ui">Top<span fill="#6b7280" font-weight="500">Collective</span></text>
+  <defs>
+    <linearGradient id="lg" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <rect width="40" height="40" rx="10" fill="url(#lg)"/>
+  <circle cx="16" cy="20" r="7" fill="white" opacity="0.9"/>
+  <circle cx="24" cy="20" r="7" fill="white" opacity="0.6"/>
+  <text x="52" y="28" fill="currentColor" font-size="20" font-weight="800" font-family="system-ui">Top</text>
+  <text x="90" y="28" fill="#6b7280" font-size="20" font-weight="500" font-family="system-ui" class="dark:fill-gray-400">Collective</text>
 </svg>
