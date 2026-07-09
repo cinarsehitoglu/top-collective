@@ -13,32 +13,38 @@ import Link from "next/link";
 
 export default function ListingDetailPage() {
   const params = useParams();
-  const { user: currentUser, getUserById } = useAuth();
+  const { user: currentUser } = useAuth();
   const { t } = useLang();
   const [listing, setListing] = useState<any | undefined>(undefined);
+  const [seller, setSeller] = useState<any | null>(null);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("tc_listings") || "[]");
-    setListing(data.find((l: any) => l.id === params.id) || null);
+    fetch(`/api/listings/${params.id}`).then(r => {
+      if (!r.ok) { setListing(null); return; }
+      return r.json();
+    }).then(data => {
+      setListing(data);
+      if (data?.userId) {
+        fetch(`/api/users/${data.userId}`).then(r => r.ok && r.json()).then(s => setSeller(s)).catch(() => {});
+      }
+    }).catch(() => setListing(null));
   }, [params.id]);
 
   if (listing === undefined) return <div className="p-8 text-center text-muted-foreground">{t("loading")}</div>;
   if (listing === null) notFound();
-
-  const seller = getUserById(listing.userId);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-center overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800 h-80">
-            <img src={listing.images?.[0] || listing.imageUrl || "/placeholder.svg"} alt={listing.title} className="h-full w-full object-cover" />
+            <img src={listing.images?.[0]?.url || listing.images?.[0] || "/placeholder.svg"} alt={listing.title} className="h-full w-full object-cover" />
           </div>
           <Card>
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
-                  {listing.category && <Badge variant="secondary" className="mb-2">{listing.category}</Badge>}
+                  {listing.category && <Badge variant="secondary" className="mb-2">{listing.category.name}</Badge>}
                   <h1 className="text-2xl font-bold">{listing.title}</h1>
                 </div>
                 <div className="flex gap-1">

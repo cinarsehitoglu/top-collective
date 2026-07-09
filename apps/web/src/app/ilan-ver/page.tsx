@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, X, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { useLang } from "@/context/lang-context";
-import { categories } from "@/data/mock";
 import Link from "next/link";
 
 const MAX_IMAGES = 5;
@@ -31,11 +30,16 @@ export default function CreateListingPage() {
   const [images, setImages] = useState<{ dataUrl: string; name: string }[]>([]);
   const [imageError, setImageError] = useState("");
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [price, setPrice] = useState("");
   const [currency, setCurrency] = useState("TRY");
   const [location, setLocation] = useState("");
   const [desc, setDesc] = useState("");
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("/api/categories").then(r => r.json()).then(setCategories).catch(() => {});
+  }, []);
 
   if (!user) {
     return (
@@ -72,19 +76,26 @@ export default function CreateListingPage() {
     setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !price) return;
-    const listing = {
-      id: "ilan-" + Date.now(),
-      title, category, price: Number(price), currency, location, description: desc,
-      images: images.map((img) => img.dataUrl),
-      userId: user.id, createdAt: new Date().toISOString(),
-    };
-    const existing = JSON.parse(localStorage.getItem("tc_listings") || "[]");
-    existing.unshift(listing);
-    localStorage.setItem("tc_listings", JSON.stringify(existing));
-    router.push("/");
+    try {
+      const res = await fetch("/api/listings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          description: desc,
+          price: Number(price),
+          currency,
+          location,
+          categoryId,
+          userId: user.id,
+          images: images.map((img) => img.dataUrl),
+        }),
+      });
+      if (res.ok) router.push("/");
+    } catch {}
   };
 
   return (
@@ -131,9 +142,9 @@ export default function CreateListingPage() {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">{t("create.category")}</label>
-              <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={category} onChange={(e) => setCategory(e.target.value)}>
+              <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
                 <option value="">Kategori seçin</option>
-                {categories.map((c) => <option key={c.id} value={c.slug}>{c.name}</option>)}
+                {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
             <div className="grid grid-cols-2 gap-4">

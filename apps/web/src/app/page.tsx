@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { categories } from "@/data/mock";
 import { CategoryCard } from "@/components/category-card";
 import { ListingCard } from "@/components/listing-card";
 import { SlidersHorizontal, Inbox } from "lucide-react";
@@ -13,12 +12,11 @@ import { useLang } from "@/context/lang-context";
 export default function HomePage() {
   const { t } = useLang();
   const [listings, setListings] = useState<ListingItem[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
 
   useEffect(() => {
-    try {
-      const data = localStorage.getItem("tc_listings");
-      if (data) setListings(JSON.parse(data));
-    } catch {}
+    fetch("/api/listings").then(r => r.json()).then(setListings).catch(() => {});
+    fetch("/api/categories").then(r => r.json()).then(setCategories).catch(() => {});
   }, []);
 
   return (

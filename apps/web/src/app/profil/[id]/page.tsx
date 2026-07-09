@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useParams, notFound } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { useLang } from "@/context/lang-context";
@@ -7,14 +8,29 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Mail, Calendar, ShieldCheck, MessageCircle } from "lucide-react";
+import { ListingCard } from "@/components/listing-card";
 
 export default function ProfilePage() {
   const params = useParams();
-  const { getUserById, user: currentUser } = useAuth();
+  const { user: currentUser } = useAuth();
   const { t } = useLang();
-  const profile = getUserById(params.id as string);
+  const [profile, setProfile] = useState<any | null>(undefined);
+  const [listings, setListings] = useState<any[]>([]);
 
-  if (!profile) notFound();
+  useEffect(() => {
+    fetch(`/api/users/${params.id}`).then(r => {
+      if (!r.ok) { setProfile(null); return; }
+      return r.json();
+    }).then(data => {
+      setProfile(data);
+      if (data?.id) {
+        fetch(`/api/listings?userId=${data.id}`).then(r => r.json()).then(setListings).catch(() => {});
+      }
+    }).catch(() => setProfile(null));
+  }, [params.id]);
+
+  if (profile === undefined) return <div className="p-8 text-center text-muted-foreground">{t("loading")}</div>;
+  if (profile === null) notFound();
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
@@ -22,7 +38,7 @@ export default function ProfilePage() {
         <CardContent className="p-8">
           <div className="flex flex-col items-center sm:flex-row sm:items-start gap-6">
             <div className="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-3xl font-bold text-primary shrink-0">
-              {profile.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+              {profile.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
             </div>
             <div className="flex-1 text-center sm:text-left">
               <div className="flex items-center justify-center sm:justify-start gap-2">
@@ -46,9 +62,15 @@ export default function ProfilePage() {
       </Card>
       <div className="mt-6">
         <h2 className="text-lg font-semibold mb-4">{t("profile.listings")}</h2>
-        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-12 text-center">
-          <p className="text-muted-foreground">{t("profile.nolistings")}</p>
-        </div>
+        {listings.length > 0 ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {listings.map((listing) => <ListingCard key={listing.id} listing={listing} />)}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-12 text-center">
+            <p className="text-muted-foreground">{t("profile.nolistings")}</p>
+          </div>
+        )}
       </div>
     </div>
   );

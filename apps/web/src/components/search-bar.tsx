@@ -40,17 +40,16 @@ export function SearchBar({ large }: { large?: boolean }) {
       }
     });
 
-    try {
-      const listings = JSON.parse(localStorage.getItem("tc_listings") || "[]");
-      listings.forEach((l: any) => {
-        if (l.title?.toLowerCase().includes(q)) {
-          matches.push({ type: "listing", id: l.id, title: l.title, subtitle: `${l.price} ${l.currency}` });
-        }
+    fetch(`/api/listings?q=${encodeURIComponent(q)}`).then(r => r.json()).then((listings: any[]) => {
+      listings.forEach((l) => {
+        matches.push({ type: "listing", id: l.id, title: l.title, subtitle: `${l.price} ${l.currency || "TRY"}` });
       });
-    } catch {}
-
-    setResults(matches.slice(0, 6));
-    setOpen(matches.length > 0);
+      setResults(matches.slice(0, 6));
+      setOpen(matches.length > 0);
+    }).catch(() => {
+      setResults(matches.slice(0, 6));
+      setOpen(matches.length > 0);
+    });
   }, [query, users]);
 
   const go = (result: SearchResult) => {

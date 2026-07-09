@@ -2,13 +2,11 @@
 
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 
-type UserRole = "admin" | "user";
-
 interface User {
   id: string;
   name: string;
   email: string;
-  role: UserRole;
+  role: string;
   phone?: string;
   createdAt: string;
 }
@@ -19,30 +17,11 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   register: (name: string, email: string, password: string, phone?: string) => Promise<boolean>;
   logout: () => void;
-  getUserById: (id: string) => User | undefined;
+  getUserById: (id: string) => Promise<User | undefined>;
+  refreshUsers: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
-
-function loadUsers(): User[] {
-  try {
-    const data = localStorage.getItem("tc_users");
-    if (data) return JSON.parse(data);
-  } catch {}
-  return [
-    {
-      id: "admin-1",
-      name: "Cinar Sehitoglu",
-      email: "cinarsehitoglu@gmail.com",
-      role: "admin",
-      createdAt: new Date("2024-01-01").toISOString(),
-    },
-  ];
-}
-
-function saveUsers(users: User[]) {
-  localStorage.setItem("tc_users", JSON.stringify(users));
-}
 
 function loadSession(): User | null {
   try {
@@ -65,58 +44,74 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [ready, setReady] = useState(false);
 
-  useEffect(() => {
-    const u = loadUsers();
-    setUsers(u);
-    const s = loadSession();
-    if (s) {
-      const match = u.find((x) => x.id === s.id);
-      if (match) setUser(match);
-    }
-    setReady(true);
+  const refreshUsers = useCallback(async () => {
+    try {
+      const res = await fetch("/api/users");
+      if (res.ok) {
+        const data = await res.json();
+        setUsers(data);
+      }
+    } catch {}
   }, []);
 
-  const login = useCallback(async (email: string, _password: string) => {
-    const existing = users.find((u) => u.email === email);
-    if (existing) {
-      setUser(existing);
-      saveSession(existing);
-      return true;
-    }
-    return false;
-  }, [users]);
+  useEffect(() => {
+    const s = loadSession();
+    if (s) setUser(s);
+    refreshUsers().finally(() => setReady(true));
+  }, [refreshUsers]);
 
-  const register = useCallback(async (name: string, email: string, _password: string, phone?: string) => {
-    if (users.find((u) => u.email === email)) return false;
-    const newUser: User = {
-      id: "user-" + Date.now(),
-      name,
-      email,
-      role: "user",
-      phone,
-      createdAt: new Date().toISOString(),
-    };
-    const updated = [...users, newUser];
-    setUsers(updated);
-    saveUsers(updated);
-    setUser(newUser);
-    saveSession(newUser);
-    return true;
-  }, [users]);
+  const login = useCallback(async (email: string, password: string) => {
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!res.ok) return false;
+      const u = await res.json();
+      setUser(u);
+      saveSession(u);
+      refreshUsers();
+      return true;
+    } catch {
+      return false;
+    }
+  }, [refreshUsers]);
+
+  const register = useCallback(async (name: string, email: string, password: string, phone?: string) => {
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, phone }),
+      });
+      if (!res.ok) return false;
+      const u = await res.json();
+      setUser(u);
+      saveSession(u);
+      refreshUsers();
+      return true;
+    } catch {
+      return false;
+    }
+  }, [refreshUsers]);
 
   const logout = useCallback(() => {
     setUser(null);
     saveSession(null);
   }, []);
 
-  const getUserById = useCallback((id: string) => {
-    return users.find((u) => u.id === id);
-  }, [users]);
+  const getUserById = useCallback(async (id: string) => {
+    try {
+      const res = await fetch(`/api/users/${id}`);
+      if (res.ok) return await res.json();
+    } catch {}
+  }, []);
 
   if (!ready) return null;
 
   return (
-    <AuthContext.Provider value={{ user, users, login, register, logout, getUserById }}>
+    <AuthContext.Provider value={{ user, users, login, register, logout, getUserById, refreshUsers }}>
       {children}
     </AuthContext.Provider>
   );

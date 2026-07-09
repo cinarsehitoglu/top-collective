@@ -6,7 +6,8 @@ import { formatPrice, timeAgo } from "@/lib/utils";
 import type { ListingItem } from "@/data/mock";
 
 export function ListingCard({ listing }: { listing: ListingItem }) {
-  const imgSrc = listing.imageUrl || (listing as any).images?.[0] || "/placeholder.svg";
+  const imgs = (listing as any).images;
+  const imgSrc = listing.imageUrl || (imgs?.[0]?.url || imgs?.[0]) || "/placeholder.svg";
   return (
     <Link href={`/ilan/${listing.id}`}>
       <Card className="group overflow-hidden transition-all hover:shadow-md">
