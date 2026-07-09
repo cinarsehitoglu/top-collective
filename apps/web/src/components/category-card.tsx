@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, Car, Sofa, Dog, Briefcase, Wrench, Book, Package } from "lucide-react";
+import { Building2, Car, Sofa, Dog, Briefcase, Wrench, Book, Package, Album } from "lucide-react";
 import type { Category } from "@/data/mock";
 import type { LucideIcon } from "lucide-react";
 
@@ -12,6 +12,7 @@ const iconMap: Record<string, LucideIcon> = {
   wrench: Wrench,
   book: Book,
   package: Package,
+  album: Album,
 };
 
 export function CategoryCard({ category }: { category: Category }) {

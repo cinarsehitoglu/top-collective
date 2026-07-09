@@ -28,4 +28,5 @@ export const categories: Category[] = [
   { id: "6", name: "Hizmetler", slug: "hizmetler", icon: "wrench", count: 0 },
   { id: "7", name: "Özel Dersler", slug: "ozel-dersler", icon: "book", count: 0 },
   { id: "8", name: "Toplu Satışlıklar", slug: "toplu-satisliklar", icon: "package", count: 0 },
+  { id: "9", name: "Koleksiyon Ürünleri", slug: "koleksiyon-urunleri", icon: "album", count: 0 },
 ];
