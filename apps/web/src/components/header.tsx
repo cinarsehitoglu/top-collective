@@ -17,19 +17,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:bg-gray-950/95">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2 shrink-0">
-          <svg width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="lg" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#2563eb"/>
-                <stop offset="1" stopColor="#7c3aed"/>
-              </linearGradient>
-            </defs>
-            <rect width="40" height="40" rx="10" fill="url(#lg)"/>
-            <circle cx="16" cy="20" r="7" fill="white" opacity="0.85"/>
-            <circle cx="24" cy="20" r="7" fill="white" opacity="0.5"/>
-          </svg>
-          <span className="text-lg font-bold">Top</span>
-          <span className="text-lg text-muted-foreground font-medium">Collective</span>
+          <img src="/logo.jpg" alt="Top Collective" className="h-8 w-auto" />
         </Link>
 
         <div className="flex flex-1 items-center gap-2">
