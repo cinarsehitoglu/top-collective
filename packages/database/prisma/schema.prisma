@@ -55,6 +55,8 @@ model User {
   bio           String?
   isVerified    Boolean   @default(false)
   isActive      Boolean   @default(true)
+  badge         String?
+  badgeColor    String   @default("green")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

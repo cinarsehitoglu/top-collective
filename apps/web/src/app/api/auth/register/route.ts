@@ -26,6 +26,8 @@ export async function POST(req: NextRequest) {
       email: user.email,
       phone: user.phone,
       role: user.role,
+      badge: user.badge,
+      badgeColor: user.badgeColor,
       createdAt: user.createdAt.toISOString(),
     });
   } catch (e) {

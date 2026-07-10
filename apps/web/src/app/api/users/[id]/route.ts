@@ -7,7 +7,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       where: { id: params.id },
       select: {
         id: true, name: true, email: true, phone: true, role: true,
-        bio: true, photoUrl: true, isVerified: true, createdAt: true,
+        bio: true, photoUrl: true, isVerified: true, badge: true, badgeColor: true, createdAt: true,
       },
     });
 

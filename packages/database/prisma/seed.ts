@@ -13,6 +13,7 @@ async function main() {
         email: "cinarsehitoglu@gmail.com",
         passwordHash: hash,
         role: "ADMIN",
+        badgeColor: "green",
       },
     });
     console.log("Admin user created");

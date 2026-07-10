@@ -7,17 +7,17 @@ import { useLang } from "@/context/lang-context";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Mail, Calendar, ShieldCheck, MessageCircle } from "lucide-react";
+import { Mail, Calendar, ShieldCheck, Shield, Award, MessageCircle, Check } from "lucide-react";
 import { ListingCard } from "@/components/listing-card";
 
 export default function ProfilePage() {
   const params = useParams();
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, refreshUsers } = useAuth();
   const { t } = useLang();
   const [profile, setProfile] = useState<any | null>(undefined);
   const [listings, setListings] = useState<any[]>([]);
 
-  useEffect(() => {
+  const fetchProfile = () => {
     fetch(`/api/users/${params.id}`).then(r => {
       if (!r.ok) { setProfile(null); return; }
       return r.json();
@@ -27,10 +27,37 @@ export default function ProfilePage() {
         fetch(`/api/listings?userId=${data.id}`).then(r => r.json()).then(setListings).catch(() => {});
       }
     }).catch(() => setProfile(null));
-  }, [params.id]);
+  };
+
+  useEffect(() => { fetchProfile(); }, [params.id]);
+
+  const toggleBadge = async () => {
+    if (!currentUser || currentUser.role !== "ADMIN") return;
+    const res = await fetch("/api/admin/badge-color", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ adminId: currentUser.id }),
+    });
+    if (res.ok) { fetchProfile(); refreshUsers(); }
+  };
+
+  const toggleTrusted = async () => {
+    if (!currentUser || currentUser.role !== "ADMIN" || !profile) return;
+    const res = await fetch("/api/admin/badge", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: profile.id, adminId: currentUser.id }),
+    });
+    if (res.ok) { fetchProfile(); }
+  };
 
   if (profile === undefined) return <div className="p-8 text-center text-muted-foreground">{t("loading")}</div>;
   if (profile === null) notFound();
+
+  const isAdmin = profile.role === "ADMIN";
+  const isOwnProfile = currentUser?.id === profile.id;
+  const badgeColor = profile.badgeColor || "green";
+  const isTrusted = profile.badge === "trusted";
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
@@ -41,11 +68,17 @@ export default function ProfilePage() {
               {profile.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
             </div>
             <div className="flex-1 text-center sm:text-left">
-              <div className="flex items-center justify-center sm:justify-start gap-2">
+              <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
                 <h1 className="text-2xl font-bold">{profile.name}</h1>
-                {profile.role === "admin" && (
-                  <Badge className="bg-amber-500 hover:bg-amber-600">
-                    <ShieldCheck className="mr-1 h-3 w-3" />{t("profile.admin")}
+                {isAdmin && (
+                  <Badge className={badgeColor === "green" ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"}>
+                    {badgeColor === "green" ? <ShieldCheck className="mr-1 h-3 w-3" /> : <Shield className="mr-1 h-3 w-3" />}
+                    {t("profile.admin")}
+                  </Badge>
+                )}
+                {isTrusted && (
+                  <Badge className="bg-red-500 hover:bg-red-600">
+                    <Check className="mr-1 h-3 w-3" />{t("profile.trusted")}
                   </Badge>
                 )}
               </div>
@@ -53,9 +86,21 @@ export default function ProfilePage() {
                 <span className="flex items-center gap-1"><Mail className="h-4 w-4" />{profile.email}</span>
                 <span className="flex items-center gap-1"><Calendar className="h-4 w-4" />{t("profile.join")}: {new Date(profile.createdAt).toLocaleDateString("tr-TR")}</span>
               </div>
-              {currentUser && currentUser.id !== profile.id && (
-                <Button className="mt-4"><MessageCircle className="mr-2 h-4 w-4" />{t("detail.sendmsg")}</Button>
-              )}
+              <div className="mt-4 flex flex-wrap gap-2">
+                {currentUser && currentUser.id !== profile.id && (
+                  <Button size="sm" variant="outline"><MessageCircle className="mr-1 h-4 w-4" />{t("detail.sendmsg")}</Button>
+                )}
+                {isOwnProfile && isAdmin && (
+                  <Button size="sm" variant="outline" onClick={toggleBadge}>
+                    <Award className="mr-1 h-4 w-4" />{t("profile.badge.toggle")}
+                  </Button>
+                )}
+                {currentUser?.role === "ADMIN" && !isOwnProfile && (
+                  <Button size="sm" variant={isTrusted ? "destructive" : "default"} onClick={toggleTrusted}>
+                    <Check className="mr-1 h-4 w-4" />{isTrusted ? t("profile.badge.remove") : t("profile.badge.give")}
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </CardContent>
