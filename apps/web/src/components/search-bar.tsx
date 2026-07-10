@@ -30,8 +30,9 @@ export function SearchBar({ large }: { large?: boolean }) {
   }, []);
 
   useEffect(() => {
-    if (!query.trim()) { setResults([]); setOpen(false); return; }
-    const q = query.toLowerCase();
+    const trimmed = query.trim();
+    if (trimmed.length < 2) { setResults([]); setOpen(false); return; }
+    const q = trimmed.toLowerCase();
     const matches: SearchResult[] = [];
 
     users.forEach((u) => {
@@ -80,8 +81,8 @@ export function SearchBar({ large }: { large?: boolean }) {
                 {r.type === "user" ? <User className="h-4 w-4 text-primary" /> : <Package className="h-4 w-4 text-primary" />}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium truncate">{r.title}</p>
-                <p className="text-xs text-muted-foreground truncate">{r.subtitle}</p>
+                <p className="text-sm font-medium">{r.title}</p>
+                <p className="text-xs text-muted-foreground">{r.subtitle}</p>
               </div>
             </button>
           ))}
