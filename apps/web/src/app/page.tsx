@@ -21,10 +21,13 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6">
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/[0.07] via-background to-purple-500/[0.04] pb-8 pt-8">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/[0.06] via-transparent to-transparent" />
-        <div className="absolute -left-20 -top-20 h-40 w-40 rounded-full bg-primary/[0.03] blur-3xl" />
-        <div className="absolute -right-20 -bottom-20 h-40 w-40 rounded-full bg-purple-500/[0.03] blur-3xl" />
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary/[0.08] via-background via-60% to-purple-500/[0.06] pb-8 pt-10">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-primary/[0.05] via-transparent to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-purple-500/[0.04] via-transparent to-transparent" />
+        <div className="pointer-events-none absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+        <div className="absolute -left-32 -top-32 h-64 w-64 rounded-full bg-primary/[0.04] blur-3xl" />
+        <div className="absolute -right-32 -bottom-32 h-64 w-64 rounded-full bg-purple-500/[0.04] blur-3xl" />
+        <div className="absolute left-1/3 top-1/4 h-32 w-32 rounded-full bg-primary/[0.03] blur-2xl" />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
           <div className="mx-auto max-w-xl text-center">
             <div className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-4 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm shadow-sm">
@@ -43,8 +46,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-6">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="relative py-6">
+        <div className="pointer-events-none absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
           <div className="mb-6">
             <h2 className="text-lg font-semibold">{t("home.categories")}</h2>
           </div>
@@ -56,8 +60,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-6">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="relative py-6">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/[0.02] to-transparent" />
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
           <h2 className="mb-6 text-lg font-semibold">{t("home.listings")}</h2>
           {listings.length > 0 ? (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -67,7 +72,9 @@ export default function HomePage() {
             </div>
           ) : (
             <div className="relative flex flex-col items-center justify-center overflow-hidden rounded-2xl border bg-gradient-to-b from-muted/40 to-background py-20 text-center">
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/[0.04] via-transparent to-transparent" />
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/[0.06] via-transparent to-transparent" />
+              <div className="absolute -left-16 -top-16 h-32 w-32 rounded-full bg-primary/[0.03] blur-3xl" />
+              <div className="absolute -right-16 -bottom-16 h-32 w-32 rounded-full bg-purple-500/[0.03] blur-3xl" />
               <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-muted/50">
                 <Package className="h-10 w-10 text-muted-foreground/40" />
               </div>
@@ -81,29 +88,32 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden py-14">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-background to-purple-500/[0.03]" />
+        <div className="pointer-events-none absolute -left-20 -top-20 h-40 w-40 rounded-full bg-primary/[0.04] blur-3xl" />
+        <div className="pointer-events-none absolute -right-20 -bottom-20 h-40 w-40 rounded-full bg-purple-500/[0.04] blur-3xl" />
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center">
             <h2 className="text-xl font-bold">{t("home.why")}</h2>
             <p className="mt-1.5 text-sm text-muted-foreground">Koleksiyonculuk deneyimini bir üst seviyeye taşı</p>
           </div>
           <div className="mt-8 grid gap-5 sm:grid-cols-3">
-            <div className="group relative rounded-2xl border bg-card p-7 transition-all hover:border-primary/40 hover:shadow-sm">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/[0.12] to-purple-500/[0.12] text-primary">
+            <div className="group relative rounded-2xl border bg-card/80 backdrop-blur-sm p-7 transition-all hover:border-primary/40 hover:shadow-md">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/[0.15] to-purple-500/[0.15] text-primary">
                 <Shield className="h-6 w-6" />
               </div>
               <h3 className="mt-4 text-base font-semibold">{t("why.safe")}</h3>
               <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{t("why.safe.desc")}</p>
             </div>
-            <div className="group relative rounded-2xl border bg-card p-7 transition-all hover:border-primary/40 hover:shadow-sm">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/[0.12] to-purple-500/[0.12] text-primary">
+            <div className="group relative rounded-2xl border bg-card/80 backdrop-blur-sm p-7 transition-all hover:border-primary/40 hover:shadow-md">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/[0.15] to-purple-500/[0.15] text-primary">
                 <Search className="h-6 w-6" />
               </div>
               <h3 className="mt-4 text-base font-semibold">{t("why.easy")}</h3>
               <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{t("why.easy.desc")}</p>
             </div>
-            <div className="group relative rounded-2xl border bg-card p-7 transition-all hover:border-primary/40 hover:shadow-sm">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/[0.12] to-purple-500/[0.12] text-primary">
+            <div className="group relative rounded-2xl border bg-card/80 backdrop-blur-sm p-7 transition-all hover:border-primary/40 hover:shadow-md">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/[0.15] to-purple-500/[0.15] text-primary">
                 <Users className="h-6 w-6" />
               </div>
               <h3 className="mt-4 text-base font-semibold">{t("why.free")}</h3>
