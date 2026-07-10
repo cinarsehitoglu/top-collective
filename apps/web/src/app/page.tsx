@@ -31,7 +31,7 @@ export default function HomePage() {
               <Sparkles className="h-3.5 w-3.5 text-primary" />
               Koleksiyoncular için özel platform
             </div>
-            <p className="mt-5 text-base text-muted-foreground leading-relaxed">
+            <p className="mt-5 text-lg text-muted-foreground leading-relaxed">
               Koleksiyonluk parçaları al, sat, keşfet. Tutkularını paylaşan koleksiyoncularla buluş.
             </p>
             <div className="mt-6 flex justify-center">
