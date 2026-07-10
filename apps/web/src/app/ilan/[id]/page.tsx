@@ -5,18 +5,21 @@ import { useParams, notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Calendar, MessageCircle, Heart, Share2, Flag } from "lucide-react";
+import { MapPin, Calendar, MessageCircle, Heart, Share2, Flag, Trash2 } from "lucide-react";
 import { formatPrice, timeAgo } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
 import { useLang } from "@/context/lang-context";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ListingDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const { user: currentUser } = useAuth();
   const { t } = useLang();
   const [listing, setListing] = useState<any | undefined>(undefined);
   const [seller, setSeller] = useState<any | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetch(`/api/listings/${params.id}`).then(r => {
@@ -29,6 +32,17 @@ export default function ListingDetailPage() {
       }
     }).catch(() => setListing(null));
   }, [params.id]);
+
+  const handleDelete = async () => {
+    if (!confirm("İlanı silmek istediğine emin misin?")) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/listings/${params.id}`, { method: "DELETE" });
+      if (res.ok) router.push("/");
+      else alert("Silinirken hata oluştu");
+    } catch { alert("Silinirken hata oluştu"); }
+    setDeleting(false);
+  };
 
   if (listing === undefined) return <div className="p-8 text-center text-muted-foreground">{t("loading")}</div>;
   if (listing === null) notFound();
@@ -82,6 +96,11 @@ export default function ListingDetailPage() {
                 <Button className="w-full"><MessageCircle className="mr-2 h-4 w-4" />{t("detail.sendmsg")}</Button>
               )}
               <Button variant="outline" className="w-full"><Heart className="mr-2 h-4 w-4" />{t("detail.favorite")}</Button>
+              {currentUser && (currentUser.id === listing.userId || (currentUser as any).role === "ADMIN") && (
+                <Button variant="outline" className="w-full text-destructive hover:text-destructive" onClick={handleDelete} disabled={deleting}>
+                  <Trash2 className="mr-2 h-4 w-4" />{deleting ? "Siliniyor..." : "İlanı Sil"}
+                </Button>
+              )}
             </CardContent>
           </Card>
           <Button variant="ghost" size="sm" className="w-full text-muted-foreground">

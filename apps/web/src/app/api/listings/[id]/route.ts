@@ -1,5 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@top-collective/database";
+import { cookies } from "next/headers";
+
+async function getCurrentUserId(): Promise<string | null> {
+  const cookieStore = cookies();
+  const session = cookieStore.get("session");
+  if (!session) return null;
+  try {
+    const user = await prisma.user.findFirst({ where: { email: session.value } });
+    return user?.id || null;
+  } catch { return null; }
+}
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -17,6 +28,34 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 
     return NextResponse.json(listing);
+  } catch (e) {
+    return NextResponse.json({ error: String(e) }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const userId = await getCurrentUserId();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const listing = await prisma.listing.findUnique({ where: { id: params.id } });
+    if (!listing) {
+      return NextResponse.json({ error: "Listing not found" }, { status: 404 });
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    const isAdmin = user?.role === "ADMIN";
+
+    if (listing.userId !== userId && !isAdmin) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    await prisma.listingImage.deleteMany({ where: { listingId: params.id } });
+    await prisma.listing.delete({ where: { id: params.id } });
+
+    return NextResponse.json({ success: true });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });
   }
