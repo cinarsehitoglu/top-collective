@@ -70,19 +70,19 @@ export function SearchBar({ large }: { large?: boolean }) {
         onFocus={() => { if (results.length > 0) setOpen(true); }}
       />
       {open && (
-        <div className="absolute top-full mt-1 w-full rounded-lg border bg-white shadow-lg z-50">
+        <div className="absolute top-full mt-1 w-full rounded-lg border bg-white shadow-lg z-50" style={{ minWidth: 280 }}>
           {results.map((r) => (
             <button
               key={r.type + r.id}
               onClick={() => go(r)}
               className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-muted/50 transition-colors first:rounded-t-lg last:rounded-b-lg"
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 shrink-0">
-                {r.type === "user" ? <User className="h-4 w-4 text-primary" /> : <Package className="h-4 w-4 text-primary" />}
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                {r.type === "user" ? <User className="h-5 w-5 text-primary" /> : <Package className="h-5 w-5 text-primary" />}
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium">{r.title}</p>
-                <p className="text-xs text-muted-foreground">{r.subtitle}</p>
+              <div className="overflow-hidden">
+                <p className="text-sm font-medium leading-tight">{r.title}</p>
+                <p className="mt-0.5 text-xs leading-tight text-muted-foreground">{r.subtitle}</p>
               </div>
             </button>
           ))}
