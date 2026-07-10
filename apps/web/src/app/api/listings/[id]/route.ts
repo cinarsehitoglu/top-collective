@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@top-collective/database";
-import { cookies } from "next/headers";
 
-async function getCurrentUserId(): Promise<string | null> {
-  const cookieStore = cookies();
-  const session = cookieStore.get("session");
-  if (!session) return null;
+async function getCurrentUserId(req: NextRequest): Promise<string | null> {
+  const email = req.headers.get("x-user-email");
+  if (!email) return null;
   try {
-    const user = await prisma.user.findFirst({ where: { email: session.value } });
+    const user = await prisma.user.findUnique({ where: { email } });
     return user?.id || null;
   } catch { return null; }
 }
@@ -35,7 +33,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const userId = await getCurrentUserId();
+    const userId = await getCurrentUserId(req);
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

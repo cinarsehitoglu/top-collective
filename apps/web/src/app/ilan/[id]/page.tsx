@@ -37,7 +37,7 @@ export default function ListingDetailPage() {
     if (!confirm("İlanı silmek istediğine emin misin?")) return;
     setDeleting(true);
     try {
-      const res = await fetch(`/api/listings/${params.id}`, { method: "DELETE" });
+      const res = await fetch(`/api/listings/${params.id}`, { method: "DELETE", headers: { "x-user-email": currentUser?.email || "" } });
       if (res.ok) router.push("/");
       else alert("Silinirken hata oluştu");
     } catch { alert("Silinirken hata oluştu"); }
