@@ -93,7 +93,9 @@ export default function ListingDetailPage() {
                 </div>
               </Link>
               {currentUser && currentUser.id !== listing.userId && (
-                <Button className="w-full"><MessageCircle className="mr-2 h-4 w-4" />{t("detail.sendmsg")}</Button>
+                <Button className="w-full" onClick={() => router.push(`/mesajlar?sellerId=${listing.userId}&listingId=${listing.id}`)}>
+                  <MessageCircle className="mr-2 h-4 w-4" />{t("detail.sendmsg")}
+                </Button>
               )}
               <Button variant="outline" className="w-full"><Heart className="mr-2 h-4 w-4" />{t("detail.favorite")}</Button>
               {currentUser && (currentUser.id === listing.userId || (currentUser as any).role === "ADMIN") && (

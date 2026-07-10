@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CategoryCard } from "@/components/category-card";
 import { ListingCard } from "@/components/listing-card";
 import { Search, Sparkles, Users, Package, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,11 +11,9 @@ import { useLang } from "@/context/lang-context";
 export default function HomePage() {
   const { t } = useLang();
   const [listings, setListings] = useState<ListingItem[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
 
   useEffect(() => {
     fetch("/api/listings").then(r => r.json()).then(setListings).catch(() => {});
-    fetch("/api/categories").then(r => r.json()).then(setCategories).catch(() => {});
   }, []);
 
   return (
@@ -42,20 +39,6 @@ export default function HomePage() {
                 <SearchBar large />
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="relative py-6">
-        <div className="pointer-events-none absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '40px 40px' }} />
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold">{t("home.categories")}</h2>
-          </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:gap-4">
-            {categories.map((cat) => (
-              <CategoryCard key={cat.id} category={cat} />
-            ))}
           </div>
         </div>
       </section>
