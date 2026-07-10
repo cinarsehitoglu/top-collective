@@ -1,18 +1,14 @@
 import Link from "next/link";
-import { Building2, Car, Sofa, Dog, Briefcase, Wrench, Book, Package, Album } from "lucide-react";
+import { Album, Dices, Gamepad2, Palette, Radio, Package } from "lucide-react";
 import type { Category } from "@/data/mock";
 import type { LucideIcon } from "lucide-react";
 
 const iconMap: Record<string, LucideIcon> = {
-  building: Building2,
-  car: Car,
-  sofa: Sofa,
-  dog: Dog,
-  briefcase: Briefcase,
-  wrench: Wrench,
-  book: Book,
-  package: Package,
   album: Album,
+  dices: Dices,
+  gamepad: Gamepad2,
+  palette: Palette,
+  radio: Radio,
 };
 
 export function CategoryCard({ category }: { category: Category }) {

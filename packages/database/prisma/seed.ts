@@ -23,15 +23,11 @@ async function main() {
   if (catCount === 0) {
     await prisma.category.createMany({
       data: [
-        { name: "Emlak", slug: "emlak", icon: "building", sortOrder: 1 },
-        { name: "Vasıta", slug: "vasita", icon: "car", sortOrder: 2 },
-        { name: "İkinci El Eşya", slug: "ikinci-el-esya", icon: "sofa", sortOrder: 3 },
-        { name: "Hayvanlar", slug: "hayvanlar", icon: "dog", sortOrder: 4 },
-        { name: "İş İlanları", slug: "is-ilanlari", icon: "briefcase", sortOrder: 5 },
-        { name: "Hizmetler", slug: "hizmetler", icon: "wrench", sortOrder: 6 },
-        { name: "Özel Dersler", slug: "ozel-dersler", icon: "book", sortOrder: 7 },
-        { name: "Toplu Satışlıklar", slug: "toplu-satisliklar", icon: "package", sortOrder: 8 },
-        { name: "Koleksiyon Ürünleri", slug: "koleksiyon-urunleri", icon: "album", sortOrder: 9 },
+        { name: "Koleksiyon Ürünleri", slug: "koleksiyon-urunleri", icon: "album", sortOrder: 1 },
+        { name: "Oyuncak & Figür", slug: "oyuncak-figur", icon: "dices", sortOrder: 2 },
+        { name: "Kart & Oyun", slug: "kart-oyun", icon: "gamepad", sortOrder: 3 },
+        { name: "Sanat & Fotoğraf", slug: "sanat-fotograf", icon: "palette", sortOrder: 4 },
+        { name: "Retro Teknoloji", slug: "retro-teknoloji", icon: "radio", sortOrder: 5 },
       ],
     });
     console.log("Categories seeded");
