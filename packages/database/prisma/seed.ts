@@ -26,8 +26,7 @@ async function main() {
         { name: "Koleksiyon Ürünleri", slug: "koleksiyon-urunleri", icon: "album", sortOrder: 1 },
         { name: "Oyuncak & Figür", slug: "oyuncak-figur", icon: "dices", sortOrder: 2 },
         { name: "Kart & Oyun", slug: "kart-oyun", icon: "gamepad", sortOrder: 3 },
-        { name: "Sanat & Fotoğraf", slug: "sanat-fotograf", icon: "palette", sortOrder: 4 },
-        { name: "Retro Teknoloji", slug: "retro-teknoloji", icon: "radio", sortOrder: 5 },
+        { name: "Para & Pul", slug: "para-pul", icon: "coins", sortOrder: 4 },
       ],
     });
     console.log("Categories seeded");
